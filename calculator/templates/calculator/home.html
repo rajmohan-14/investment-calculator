@@ -2,26 +2,22 @@
 <html>
 <head>
     <title>Investment Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial;
-            max-width: 600px;
+            max-width: 700px;
             margin: 40px auto;
             padding: 0 20px;
             background: #f8fafc;
         }
-
-        h1 {
-            color: #1e3a5f;
-        }
-
+        h1 { color: #1e3a5f; }
         label {
             display: block;
             margin-top: 16px;
             font-weight: bold;
             color: #333;
         }
-
         input {
             width: 100%;
             padding: 10px;
@@ -31,7 +27,6 @@
             box-sizing: border-box;
             font-size: 15px;
         }
-
         button {
             margin-top: 24px;
             padding: 12px 28px;
@@ -43,53 +38,117 @@
             cursor: pointer;
             width: 100%;
         }
-
-        button:hover {
-            background: #1d4ed8;
+        button:hover { background: #1d4ed8; }
+        .results {
+            display: flex;
+            gap: 20px;
+            margin-top: 32px;
         }
+        .card {
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .card h2 { margin-top: 0; }
     </style>
 </head>
 <body>
 
-    <h1>📈 Investment Calculator</h1>
-    <p>Compare SIP vs Lump Sum returns</p>
+<h1>📈 Investment Calculator</h1>
+<p>Compare SIP vs Lump Sum returns</p>
 
-    <form method="POST">
-        {% csrf_token %}
+<form method="POST">
+    {% csrf_token %}
 
-        <label>Monthly SIP Amount (₹)</label>
-        <input type="number" name="monthly_sip" placeholder="e.g. 5000" required>
+    <label>Monthly SIP Amount (₹)</label>
+    <input type="number" name="monthly_sip" value="{{ monthly_sip|default:'' }}" placeholder="e.g. 5000" required>
 
-        <label>Lump Sum Amount (₹)</label>
-        <input type="number" name="lump_sum" placeholder="e.g. 60000" required>
+    <label>Lump Sum Amount (₹)</label>
+    <input type="number" name="lump_sum" value="{{ lump_sum|default:'' }}" placeholder="e.g. 60000" required>
 
-        <label>Duration (Years)</label>
-        <input type="number" name="years" placeholder="e.g. 10" required>
+    <label>Duration (Years)</label>
+    <input type="number" name="years" value="{{ years|default:'' }}" placeholder="e.g. 10" required>
 
-        <label>Expected Annual Return (%)</label>
-        <input type="number" name="annual_rate" placeholder="e.g. 12" step="0.1" required>
+    <label>Expected Annual Return (%)</label>
+    <input type="number" name="annual_rate" value="{{ annual_rate|default:'' }}" placeholder="e.g. 12" step="0.1" required>
 
-        <label>Inflation Rate (%)</label>
-        <input type="number" name="inflation" placeholder="e.g. 6" step="0.1" required>
+    <label>Inflation Rate (%)</label>
+    <input type="number" name="inflation" value="{{ inflation|default:'' }}" placeholder="e.g. 6" step="0.1" required>
 
-        <button type="submit">Calculate 🚀</button>
-    </form>
-    {% if sip_fv %}
-<div style="margin-top: 32px; display: flex; gap: 20px;">
+    <button type="submit">Calculate 🚀</button>
+</form>
 
-    <div style="flex:1; background:#e0f2fe; padding:20px; border-radius:10px;">
+{% if sip_fv %}
+
+<div class="results">
+    <div class="card" style="background:#e0f2fe;">
         <h2>📅 SIP Result</h2>
         <p>Future Value: <strong>₹{{ sip_fv }}</strong></p>
         <p>Real Value (after inflation): <strong>₹{{ sip_real }}</strong></p>
     </div>
-
-    <div style="flex:1; background:#dcfce7; padding:20px; border-radius:10px;">
+    <div class="card" style="background:#dcfce7;">
         <h2>💰 Lump Sum Result</h2>
         <p>Future Value: <strong>₹{{ ls_fv }}</strong></p>
         <p>Real Value (after inflation): <strong>₹{{ ls_real }}</strong></p>
     </div>
-
 </div>
+
+<!-- Chart -->
+<div style="margin-top: 40px; background: white; padding: 20px; border-radius: 10px;">
+    <h2>📊 Growth Over Time</h2>
+    <canvas id="growthChart"></canvas>
+</div>
+
+<script>
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ years_list }},
+            datasets: [
+                {
+                    label: 'SIP Growth (₹)',
+                    data: {{ sip_yearly }},
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Lump Sum Growth (₹)',
+                    data: {{ ls_yearly }},
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: {
+                        callback: function(value) {
+                            return '₹' + value.toLocaleString('en-IN');
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Years'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 {% endif %}
 
 </body>
