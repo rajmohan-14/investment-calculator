@@ -74,6 +74,23 @@
 
         <button type="submit">Calculate 🚀</button>
     </form>
+    {% if sip_fv %}
+<div style="margin-top: 32px; display: flex; gap: 20px;">
+
+    <div style="flex:1; background:#e0f2fe; padding:20px; border-radius:10px;">
+        <h2>📅 SIP Result</h2>
+        <p>Future Value: <strong>₹{{ sip_fv }}</strong></p>
+        <p>Real Value (after inflation): <strong>₹{{ sip_real }}</strong></p>
+    </div>
+
+    <div style="flex:1; background:#dcfce7; padding:20px; border-radius:10px;">
+        <h2>💰 Lump Sum Result</h2>
+        <p>Future Value: <strong>₹{{ ls_fv }}</strong></p>
+        <p>Real Value (after inflation): <strong>₹{{ ls_real }}</strong></p>
+    </div>
+
+</div>
+{% endif %}
 
 </body>
 </html>
