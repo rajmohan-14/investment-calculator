@@ -2,9 +2,78 @@
 <html>
 <head>
     <title>Investment Calculator</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f8fafc;
+        }
+
+        h1 {
+            color: #1e3a5f;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        button {
+            margin-top: 24px;
+            padding: 12px 28px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Investment Calculator 📈</h1>
-    <p>SIP vs Lump Sum calculator coming soon!</p>
+
+    <h1>📈 Investment Calculator</h1>
+    <p>Compare SIP vs Lump Sum returns</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Monthly SIP Amount (₹)</label>
+        <input type="number" name="monthly_sip" placeholder="e.g. 5000" required>
+
+        <label>Lump Sum Amount (₹)</label>
+        <input type="number" name="lump_sum" placeholder="e.g. 60000" required>
+
+        <label>Duration (Years)</label>
+        <input type="number" name="years" placeholder="e.g. 10" required>
+
+        <label>Expected Annual Return (%)</label>
+        <input type="number" name="annual_rate" placeholder="e.g. 12" step="0.1" required>
+
+        <label>Inflation Rate (%)</label>
+        <input type="number" name="inflation" placeholder="e.g. 6" step="0.1" required>
+
+        <button type="submit">Calculate 🚀</button>
+    </form>
+
 </body>
 </html>
