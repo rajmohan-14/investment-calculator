@@ -65,6 +65,19 @@
                         value="{{ stepup_rate|default:'' }}" placeholder="e.g. 10 (optional)" step="0.1">
                 </div>
 
+                <!-- Goal Based Section -->
+                <div class="col-12">
+                    <hr>
+                    <p class="fw-bold text-muted mb-2">🎯 Goal Based Calculator (optional)</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Target Amount (₹)</label>
+                    <input type="number" class="form-control" name="goal_amount"
+                        value="{{ goal_amount|default:'' }}"
+                        placeholder="e.g. 10000000 for ₹1 Crore">
+                </div>
+
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary w-100 py-2 fs-5">
                         Calculate 🚀
@@ -76,6 +89,26 @@
     </div>
 
     {% if sip_fv %}
+
+    <!-- Goal Result -->
+    {% if required_sip %}
+    <div class="card p-4 mb-4" style="background: #f0fdf4; border-left: 5px solid #16a34a;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4 class="fw-bold text-success">🎯 Goal: ₹{{ goal_amount }}</h4>
+                <p class="text-muted mb-0">
+                    To reach your goal in <strong>{{ years }} years</strong>
+                    at <strong>{{ annual_rate }}% annual return</strong>
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <p class="mb-1 text-muted">You need to SIP</p>
+                <h2 class="fw-bold text-success">₹{{ required_sip }}</h2>
+                <p class="text-muted">per month</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Result Cards -->
     <div class="row g-4 mb-4">
@@ -124,7 +157,7 @@
     </div>
 
     <!-- Chart Card -->
-    <div class="card p-4">
+    <div class="card p-4 mb-5">
         <h4 class="fw-bold mb-4">📊 Growth Over Time</h4>
         <canvas id="growthChart"></canvas>
     </div>
